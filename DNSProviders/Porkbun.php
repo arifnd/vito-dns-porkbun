@@ -134,8 +134,9 @@ class Porkbun extends AbstractDNSProvider
     public function getRecords(string $domainId): array
     {
         try {
-            $response = $this->getClient()->get("zones/{$domainId}/dns_records", [
-                'per_page' => 100,
+            $response = $this->getClient()->post("dns/retrieve/{$domainId}", [
+                'apikey' => $this->dnsProvider->credentials['apikey'],
+                'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
             ]);
 
             if (! $response->successful()) {
@@ -144,16 +145,16 @@ class Porkbun extends AbstractDNSProvider
                 return [];
             }
 
-            return collect($response->json('result'))->map(function (array $record) {
+            return collect($response->json('records'))->map(function (array $record) {
                 return [
                     'id' => $record['id'],
                     'type' => $record['type'],
                     'name' => $record['name'],
                     'content' => $record['content'],
                     'ttl' => $record['ttl'],
-                    'proxied' => $record['proxied'],
-                    'created_on' => $record['created_on'],
-                    'modified_on' => $record['modified_on'],
+                    'proxied' => '',
+                    'created_on' => '',
+                    'modified_on' => '',
                 ];
             })->toArray();
         } catch (Throwable $e) {
