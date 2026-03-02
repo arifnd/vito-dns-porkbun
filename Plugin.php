@@ -5,6 +5,8 @@ namespace App\Vito\Plugins\Arifnd\VitoDnsPorkbun;
 use App\Vito\Plugins\Arifnd\VitoDnsPorkbun\DNSProviders\Porkbun;
 use App\Plugins\AbstractPlugin;
 use App\Plugins\RegisterDNSProvider;
+use App\DTOs\DynamicField;
+use App\DTOs\DynamicForm;
 
 class Plugin extends AbstractPlugin
 {
