@@ -152,9 +152,9 @@ class Porkbun extends AbstractDNSProvider
                     'name' => $record['name'],
                     'content' => $record['content'],
                     'ttl' => $record['ttl'],
-                    'proxied' => '',
-                    'created_on' => '',
-                    'modified_on' => '',
+                    'proxied' => false,
+                    'created_on' => null,
+                    'modified_on' => null,
                 ];
             })->toArray();
         } catch (Throwable $e) {
@@ -167,12 +167,13 @@ class Porkbun extends AbstractDNSProvider
     public function createRecord(string $domainId, array $input): array
     {
         try {
-            $response = $this->getClient()->post("zones/{$domainId}/dns_records", [
+            $response = $this->getClient()->post("dns/create/{$domainId}", [
+                'apikey' => $this->dnsProvider->credentials['apikey'],
+                'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
                 'ttl' => $input['ttl'] ?? 1,
-                'proxied' => $input['proxied'] ?? false,
             ]);
 
             if (! $response->successful()) {
@@ -180,7 +181,18 @@ class Porkbun extends AbstractDNSProvider
                 throw ValidationException::withMessages(['record' => 'Failed to create DNS record: '.($response->json('errors')[0]['message'] ?? 'Unknown error')]);
             }
 
-            return $response->json('result');
+            $id = $response->json('id');
+
+            return [
+                'id' => $id,
+                'type' => $input['type'],
+                'name' => $input['name'],
+                'content' => $input['content'],
+                'ttl' => $input['ttl'],
+                'proxied' => false,
+                'created_on' => now(),
+                'modified_on' => null,
+            ];
         } catch (Throwable $e) {
             Log::error('Porkbun createRecord exception', ['error' => $e->getMessage()]);
             throw ValidationException::withMessages(['record' => 'Failed to create DNS record: '.$e->getMessage()]);
