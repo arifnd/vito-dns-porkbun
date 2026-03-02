@@ -202,7 +202,7 @@ class Porkbun extends AbstractDNSProvider
     public function updateRecord(string $domainId, string $recordId, array $input): array
     {
         try {
-            $response = $this->getClient()->put("dns/edit/{$domainId}/{$recordId}", [
+            $response = $this->getClient()->post("dns/edit/{$domainId}/{$recordId}", [
                 'apikey' => $this->dnsProvider->credentials['apikey'],
                 'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
                 'type' => $input['type'],
