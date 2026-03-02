@@ -223,7 +223,7 @@ class Porkbun extends AbstractDNSProvider
                 'content' => $input['content'],
                 'ttl' => $input['ttl'],
                 'proxied' => false,
-                // 'created_on' => now(),
+                'created_on' => now(),
                 'modified_on' => now(),
             ];
         } catch (Throwable $e) {
