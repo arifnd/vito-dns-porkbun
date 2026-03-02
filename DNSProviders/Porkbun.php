@@ -71,12 +71,12 @@ class Porkbun extends AbstractDNSProvider
         }
     }
 
-    public function getDomains(array $credentials): array
+    public function getDomains(): array
     {
         try {
             $response = $this->getClient()->post('domain/listAll', [
-                'apikey' => $credentials['apikey'],
-                'secretapikey' => $credentials['secretapikey'],
+                'apikey' => $this->dnsProvider->credentials['apikey'],
+                'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
             ]);
 
             if (! $response->successful()) {
