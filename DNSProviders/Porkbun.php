@@ -109,7 +109,7 @@ class Porkbun extends AbstractDNSProvider
                 'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
             ]);
 
-            if (! $response->successful() || $response->json('status') === 'ERROR') {
+            if (! $response->successful()) {
                 Log::error('Failed to fetch Porkbun domain', ['domainId' => $domainId, 'response' => $response->json()]);
 
                 return [];
@@ -139,7 +139,7 @@ class Porkbun extends AbstractDNSProvider
                 'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
             ]);
 
-            if (! $response->successful()) {
+            if (! $response->successful() || $response->json('status') === 'ERROR') {
                 Log::error('Failed to fetch Porkbun DNS records', ['domainId' => $domainId, 'response' => $response->json()]);
 
                 return [];
