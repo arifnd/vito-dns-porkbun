@@ -173,7 +173,7 @@ class Porkbun extends AbstractDNSProvider
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
-                'ttl' => $input['ttl'] ?? 1,
+                'ttl' => $input['ttl'] ?? 600,
             ]);
 
             if (! $response->successful()) {
