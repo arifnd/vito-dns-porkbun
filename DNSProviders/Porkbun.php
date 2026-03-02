@@ -115,7 +115,7 @@ class Porkbun extends AbstractDNSProvider
                 return [];
             }
 
-            $zone = collect($response->json('domains'))->where('domain', $domainId);
+            $zone = collect($response->json('domains'))->where('domain', $domainId)->first();
 
             return [
                 'id' => $zone['domain'],
