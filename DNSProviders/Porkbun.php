@@ -71,30 +71,31 @@ class Porkbun extends AbstractDNSProvider
         }
     }
 
-    public function getDomains(): array
+    public function getDomains(array $credentials): array
     {
         try {
-            $response = $this->getClient()->get('zones', [
-                'per_page' => 100,
+            $response = $this->getClient()->post('domain/listAll', [
+                'apikey' => $credentials['apikey'],
+                'secretapikey' => $credentials['secretapikey'],
             ]);
 
             if (! $response->successful()) {
-                Log::error('Failed to fetch Cloudflare domains', ['response' => $response->json()]);
+                Log::error('Failed to fetch Porkbun domains', ['response' => $response->json()]);
 
                 return [];
             }
 
-            return collect($response->json('result'))->map(function (array $zone) {
+            return collect($response->json('domains'))->map(function (array $zone) {
                 return [
-                    'id' => $zone['id'],
-                    'name' => $zone['name'],
+                    'id' => $zone['domain'],
+                    'name' => $zone['domain'],
                     'status' => $zone['status'],
-                    'created_on' => $zone['created_on'],
-                    'modified_on' => $zone['modified_on'],
+                    'created_on' => $zone['createDate'],
+                    'modified_on' => $zone['expireDate'],
                 ];
             })->toArray();
         } catch (Throwable $e) {
-            Log::error('Cloudflare getDomains exception', ['error' => $e->getMessage()]);
+            Log::error('Porkbun getDomains exception', ['error' => $e->getMessage()]);
 
             return [];
         }
