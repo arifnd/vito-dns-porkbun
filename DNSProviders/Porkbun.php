@@ -12,7 +12,7 @@ use Throwable;
 
 class Porkbun extends AbstractDNSProvider
 {
-    private const string API_BASE_URL = 'https://api.porkbun.com/api/json/v3/dns/';
+    private const string API_BASE_URL = 'https://api.porkbun.com/api/json/v3/';
 
     public function __construct(DNSProviderModel $dnsProvider)
     {
@@ -27,7 +27,6 @@ class Porkbun extends AbstractDNSProvider
     private function getClient(): PendingRequest
     {
         return Http::withHeaders([
-            // 'Authorization' => 'Bearer '.$this->dnsProvider->credentials['token'],
             'Content-Type' => 'application/json',
         ])->baseUrl(self::API_BASE_URL);
     }
@@ -51,18 +50,16 @@ class Porkbun extends AbstractDNSProvider
         try {
             // Use /zones endpoint to verify token works for both user-scoped and account-scoped tokens
             // This also verifies the token has Zone:Read permissions which we need
-            $response = Http::withHeaders([
-                // 'Authorization' => 'Bearer '.$credentials['token'],
-                'Content-Type' => 'application/json',
-            ])
-                ->baseUrl(self::API_BASE_URL)
-                ->get('zones', ['per_page' => 1]);
+            $response = $this->getClient()->get('ping', [
+                'apikey' => $credentials['apikey'],
+                'secretapikey' => $credentials['secretapikey'],
+            ]);
 
-            if ($response->successful() && $response->json('success') !== false) {
+            if ($response->successful() && $response->json('status') === 'SUCCESS') {
                 return true;
             }
 
-            Log::error('Cloudflare connection failed', ['response' => $response->json()]);
+            Log::error('Porkbun connection failed', ['response' => $response->json()]);
 
             return false;
         } catch (Throwable $e) {
