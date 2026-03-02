@@ -7,6 +7,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\DNSProviders\AbstractDNSProvider;
 use Throwable;
 
 class Porkbun extends AbstractDNSProvider
