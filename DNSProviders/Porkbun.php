@@ -217,7 +217,7 @@ class Porkbun extends AbstractDNSProvider
             }
 
             return [
-                'id' => $id,
+                'id' => $recordId,
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
