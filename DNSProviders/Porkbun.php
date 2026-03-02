@@ -104,7 +104,10 @@ class Porkbun extends AbstractDNSProvider
     public function getDomain(string $domainId): array
     {
         try {
-            $response = $this->getClient()->get("zones/{$domainId}");
+            $response = $this->getClient()->post('domain/listAll', [
+                'apikey' => $this->dnsProvider->credentials['apikey'],
+                'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
+            ]);
 
             if (! $response->successful()) {
                 Log::error('Failed to fetch Porkbun domain', ['domainId' => $domainId, 'response' => $response->json()]);
@@ -112,14 +115,14 @@ class Porkbun extends AbstractDNSProvider
                 return [];
             }
 
-            $zone = $response->json('result');
+            $zone = collect($response->json('domains'))->where('domain', $domainId);
 
             return [
-                'id' => $zone['id'],
-                'name' => $zone['name'],
+                'id' => $zone['domain'],
+                'name' => $zone['domain'],
                 'status' => $zone['status'],
-                'created_on' => $zone['created_on'],
-                'modified_on' => $zone['modified_on'],
+                'created_on' => $zone['createDate'],
+                'modified_on' => $zone['expireDate'],
             ];
         } catch (Throwable $e) {
             Log::error('Porkbun getDomain exception', ['error' => $e->getMessage()]);
