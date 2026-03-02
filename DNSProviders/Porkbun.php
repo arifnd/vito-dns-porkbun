@@ -208,7 +208,7 @@ class Porkbun extends AbstractDNSProvider
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
-                'ttl' => $input['ttl'] ?? 600,
+                'ttl' => $input['ttl'] ?? 600, // TODO: set minimum ttl to 600
             ]);
 
             if (! $response->successful()) {
@@ -223,7 +223,7 @@ class Porkbun extends AbstractDNSProvider
                 'content' => $input['content'],
                 'ttl' => $input['ttl'],
                 'proxied' => false,
-                'created_on' => now(),
+                'created_on' => now(), // TODO: get real created data
                 'modified_on' => now(),
             ];
         } catch (Throwable $e) {
@@ -235,7 +235,10 @@ class Porkbun extends AbstractDNSProvider
     public function deleteRecord(string $domainId, string $recordId): bool
     {
         try {
-            $response = $this->getClient()->delete("zones/{$domainId}/dns_records/{$recordId}");
+            $response = $this->getClient()->post("dns/delete/{$domainId}/{$recordId}", [
+                'apikey' => $this->dnsProvider->credentials['apikey'],
+                'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
+            ]);
 
             if (! $response->successful()) {
                 Log::error('Failed to delete Porkbun DNS record', ['domainId' => $domainId, 'recordId' => $recordId, 'response' => $response->json()]);
