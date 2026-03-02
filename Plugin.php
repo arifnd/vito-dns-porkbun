@@ -18,26 +18,26 @@ class Plugin extends AbstractPlugin
 
     public function boot(): void
     {
-        // $this->porkbun();
+        $this->porkbun();
     }
 
     private function porkbun(): void
     {
-        // RegisterDNSProvider::make(Porkbun::id())
-        //     ->label('Porkbun')
-        //     ->handler(Porkbun::class)
-        //     ->form(
-        //         DynamicForm::make([
-        //             DynamicField::make('apikey')
-        //                 ->text()
-        //                 ->label('API Key')
-        //                 ->description('Porkbun API key'),
-        //             DynamicField::make('secretapikey')
-        //                 ->text()
-        //                 ->label('Secret Key')
-        //                 ->description('Porkbun Secret key'),
-        //         ])
-        //     )
-        //     ->register();
+        RegisterDNSProvider::make(Porkbun::id())
+            ->label('Porkbun')
+            ->handler(Porkbun::class)
+            ->form(
+                DynamicForm::make([
+                    DynamicField::make('apikey')
+                        ->text()
+                        ->label('API Key')
+                        ->description('Porkbun API key'),
+                    DynamicField::make('secretapikey')
+                        ->text()
+                        ->label('Secret Key')
+                        ->description('Porkbun Secret key'),
+                ])
+            )
+            ->register();
     }
 }
