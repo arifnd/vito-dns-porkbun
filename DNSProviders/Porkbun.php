@@ -173,7 +173,7 @@ class Porkbun extends AbstractDNSProvider
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
-                'ttl' => $input['ttl'] ?? 600,
+                'ttl' => $input['ttl'] ?? 600, // TODO: set minimum ttl to 600
             ]);
 
             if (! $response->successful()) {
@@ -202,12 +202,13 @@ class Porkbun extends AbstractDNSProvider
     public function updateRecord(string $domainId, string $recordId, array $input): array
     {
         try {
-            $response = $this->getClient()->put("zones/{$domainId}/dns_records/{$recordId}", [
+            $response = $this->getClient()->put("dns/edit/{$domainId}/{$recordId}", [
+                'apikey' => $this->dnsProvider->credentials['apikey'],
+                'secretapikey' => $this->dnsProvider->credentials['secretapikey'],
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
-                'ttl' => $input['ttl'] ?? 1,
-                'proxied' => $input['proxied'] ?? false,
+                'ttl' => $input['ttl'] ?? 600,
             ]);
 
             if (! $response->successful()) {
@@ -215,7 +216,16 @@ class Porkbun extends AbstractDNSProvider
                 throw ValidationException::withMessages(['record' => 'Failed to update DNS record: '.($response->json('errors')[0]['message'] ?? 'Unknown error')]);
             }
 
-            return $response->json('result');
+            return [
+                'id' => $id,
+                'type' => $input['type'],
+                'name' => $input['name'],
+                'content' => $input['content'],
+                'ttl' => $input['ttl'],
+                'proxied' => false,
+                // 'created_on' => now(),
+                'modified_on' => now(),
+            ];
         } catch (Throwable $e) {
             Log::error('Porkbun updateRecord exception', ['error' => $e->getMessage()]);
             throw ValidationException::withMessages(['record' => 'Failed to update DNS record: '.$e->getMessage()]);
