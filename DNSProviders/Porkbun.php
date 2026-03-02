@@ -34,14 +34,16 @@ class Porkbun extends AbstractDNSProvider
     public function validationRules(array $input): array
     {
         return [
-            'token' => 'required|string',
+            'apikey' => 'required|string',
+            'secretapikey' => 'required|string',
         ];
     }
 
     public function credentialData(array $input): array
     {
         return [
-            'token' => $input['token'],
+            'apikey' => $input['apikey'],
+            'secretapikey' => $input['secretapikey'],
         ];
     }
 
