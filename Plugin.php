@@ -14,7 +14,7 @@ class Plugin extends AbstractPlugin
 
     protected string $description = 'Porkbun DNS plugin for VitoDeploy';
 
-    public function register(): void {}
+    // public function register(): void {}
 
     public function boot(): void
     {
