@@ -50,7 +50,7 @@ class Porkbun extends AbstractDNSProvider
         try {
             // Use /zones endpoint to verify token works for both user-scoped and account-scoped tokens
             // This also verifies the token has Zone:Read permissions which we need
-            $response = $this->getClient()->get('ping', [
+            $response = $this->getClient()->post('ping', [
                 'apikey' => $credentials['apikey'],
                 'secretapikey' => $credentials['secretapikey'],
             ]);
@@ -63,7 +63,7 @@ class Porkbun extends AbstractDNSProvider
 
             return false;
         } catch (Throwable $e) {
-            Log::error('Cloudflare connection exception', ['error' => $e->getMessage()]);
+            Log::error('Porkbun connection exception', ['error' => $e->getMessage()]);
 
             return false;
         }
