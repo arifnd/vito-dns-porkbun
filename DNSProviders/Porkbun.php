@@ -151,8 +151,8 @@ class Porkbun extends AbstractDNSProvider
                     'content' => $record['content'],
                     'ttl' => $record['ttl'],
                     'proxied' => false,
-                    'created_on' => now(),  // use current date time
-                    'modified_on' => now(),  // use current date time
+                    'created_on' => now(),
+                    'modified_on' => null,
                 ];
             })->toArray();
         } catch (Throwable $e) {
