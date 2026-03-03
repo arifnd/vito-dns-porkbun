@@ -10,7 +10,7 @@ use App\Vito\Plugins\Arifnd\VitoDnsPorkbun\DNSProviders\Porkbun;
 
 class Plugin extends AbstractPlugin
 {
-    protected string $name = 'Porkbun';
+    protected string $name = 'Porkbun DNS Plugin';
 
     protected string $description = 'Porkbun DNS plugin for VitoDeploy';
 
