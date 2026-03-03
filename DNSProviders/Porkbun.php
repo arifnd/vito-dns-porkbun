@@ -2,12 +2,12 @@
 
 namespace App\Vito\Plugins\Arifnd\VitoDnsPorkbun\DNSProviders;
 
+use App\DNSProviders\AbstractDNSProvider;
 use App\Models\DNSProvider as DNSProviderModel;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use App\DNSProviders\AbstractDNSProvider;
 use Throwable;
 
 class Porkbun extends AbstractDNSProvider
@@ -50,8 +50,6 @@ class Porkbun extends AbstractDNSProvider
     public function connect(array $credentials): bool
     {
         try {
-            // Use /zones endpoint to verify token works for both user-scoped and account-scoped tokens
-            // This also verifies the token has Zone:Read permissions which we need
             $response = $this->getClient()->post('ping', [
                 'apikey' => $credentials['apikey'],
                 'secretapikey' => $credentials['secretapikey'],
@@ -91,7 +89,7 @@ class Porkbun extends AbstractDNSProvider
                     'name' => $zone['domain'],
                     'status' => $zone['status'],
                     'created_on' => $zone['createDate'],
-                    'modified_on' => $zone['expireDate'],
+                    'modified_on' => now(),
                 ];
             })->toArray();
         } catch (Throwable $e) {
@@ -153,8 +151,8 @@ class Porkbun extends AbstractDNSProvider
                     'content' => $record['content'],
                     'ttl' => $record['ttl'],
                     'proxied' => false,
-                    'created_on' => null,
-                    'modified_on' => null,
+                    'created_on' => now(),  // use current date time
+                    'modified_on' => now(),  // use current date time
                 ];
             })->toArray();
         } catch (Throwable $e) {
@@ -173,7 +171,7 @@ class Porkbun extends AbstractDNSProvider
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
-                'ttl' => $input['ttl'] ?? 600, // TODO: set minimum ttl to 600
+                'ttl' => max($input['ttl'], 600),
             ]);
 
             if (! $response->successful()) {
@@ -208,7 +206,7 @@ class Porkbun extends AbstractDNSProvider
                 'type' => $input['type'],
                 'name' => $input['name'],
                 'content' => $input['content'],
-                'ttl' => $input['ttl'] ?? 600, // TODO: set minimum ttl to 600
+                'ttl' => max($input['ttl'], 600),
             ]);
 
             if (! $response->successful()) {
@@ -223,7 +221,7 @@ class Porkbun extends AbstractDNSProvider
                 'content' => $input['content'],
                 'ttl' => $input['ttl'],
                 'proxied' => false,
-                'created_on' => now(), // TODO: get real created data
+                'created_on' => now(),
                 'modified_on' => now(),
             ];
         } catch (Throwable $e) {
