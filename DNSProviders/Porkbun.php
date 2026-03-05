@@ -143,11 +143,11 @@ class Porkbun extends AbstractDNSProvider
                 return [];
             }
 
-            return collect($response->json('records'))->map(function (array $record) {
+            return collect($response->json('records'))->map(function (array $record) use ($domainId) {
                 return [
                     'id' => $record['id'],
                     'type' => $record['type'],
-                    'name' => $record['name'],
+                    'name' => str($record['name'])->remove(".{$domainId}"),
                     'content' => $record['content'],
                     'ttl' => $record['ttl'],
                     'proxied' => false,
